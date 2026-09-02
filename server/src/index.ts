@@ -12,5 +12,5 @@ service.seedAdmin();
 const executor = createExecutor({ nsenter: cfg.nsenter, defaultTimeoutMs: cfg.execDefaultTimeoutMs, maxTimeoutMs: cfg.execMaxTimeoutMs });
 const app = createApp({ store, service, executor, config: cfg });
 
-serveHono(app, cfg.port);
+serveHono(app, cfg.port, { service, nsenter: cfg.nsenter, maxPtySessions: Number(process.env.MAX_PTY_SESSIONS ?? 4) });
 // v0.1.0: initial backend
