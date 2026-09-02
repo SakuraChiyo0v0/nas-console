@@ -1,6 +1,6 @@
 # nas-console
 
-NAS 网页控制台：给人用的网页终端（xterm.js，开发中）+ 给 AI/程序用的 HTTP exec API。
+NAS 网页控制台：给人用的网页终端（xterm.js 交互式 PTY）+ 给 AI/程序用的 HTTP exec API。
 
 核心能力：在 NAS（绿联 UGOS）上以 Docker 容器运行，通过 `privileged + pid:host + nsenter` 拿到宿主机 root shell 执行命令（原理与 PoC 见 `docs/ugos-nas-ops.md` 第 10 节）。
 
@@ -23,6 +23,7 @@ POST /api/login           登录（账号密码）
 POST /api/logout          登出
 GET  /api/me              当前身份
 POST /api/exec            执行命令 {cmd, cwd?, timeout?} → {exitCode, stdout, stderr, ...}
+WS   /api/tty              交互式终端（WebSocket，PTY 会话，需登录 cookie 或 ?token=）
 POST /api/tokens          生成 API Token（返回完整值一次，可再查）
 GET  /api/tokens          列表（脱敏）
 GET  /api/tokens/:id      查看完整 token（登录态）

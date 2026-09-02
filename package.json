@@ -1,6 +1,6 @@
 {
   "name": "nas-console",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "description": "NAS web console: web terminal for humans + HTTP exec API for AI/programs (host shell via nsenter)",

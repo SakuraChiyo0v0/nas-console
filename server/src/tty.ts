@@ -28,7 +28,7 @@ export function createPty(opts: { nsenter: boolean }): PtySession {
     args = ["-qfc", "/bin/bash -i", "/dev/null"];
   }
   const proc = spawn(file, args, {
-    env: { ...process.env, TERM: "xterm-256color", LANG: "C.UTF-8" },
+    env: { ...process.env, TERM: "xterm-256color", LANG: "C.UTF-8", SHELL: "/bin/bash" },
     stdio: ["pipe", "pipe", "pipe"],
   });
   return {
