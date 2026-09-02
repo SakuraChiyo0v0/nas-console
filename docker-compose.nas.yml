@@ -1,0 +1,25 @@
+# NAS 部署模板（真实部署时用 SSH/WebDAV 写入实际密码，勿提交真实凭据）
+# 字段含义见 nas-console/README.md 与 docs/ugos-nas-ops.md
+services:
+  nas-console:
+    image: ghcr.io/sakurachiyo0v0/nas-console:latest
+    container_name: nas-console
+    privileged: true          # 需要：nsenter 进宿主命名空间
+    pid: host                 # 需要：能看到宿主 PID 1
+    restart: unless-stopped
+    ports:
+      - "8890:8890"
+    environment:
+      - NAS_CONSOLE_NSENTER=1
+      - NAS_CONSOLE_USERNAME=${NAS_CONSOLE_USERNAME:?请设置管理员用户名}
+      - NAS_CONSOLE_PASSWORD=${NAS_CONSOLE_PASSWORD:?请设置管理员密码}
+      - NAS_CONSOLE_DB=/data/nas-console.db
+      - PORT=8890
+      - TZ=Asia/Hong_Kong
+    volumes:
+      - nas-console-data:/data
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+
+volumes:
+  nas-console-data:
