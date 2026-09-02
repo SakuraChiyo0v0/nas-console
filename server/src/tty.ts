@@ -19,7 +19,7 @@ export function createPty(opts: { nsenter: boolean }): PtySession {
   let args: string[];
   if (opts.nsenter) {
     file = "script";
-    args = ["-qfc", "nsenter -t 1 -m -u -i -n -p -- /bin/bash -i", "/dev/null"];
+    args = ["-qfc", "export SHELL=/bin/bash; nsenter -t 1 -m -u -i -n -p -- /bin/bash -i", "/dev/null"];
   } else if (process.platform === "win32") {
     file = "powershell.exe";
     args = ["-NoLogo", "-NoExit", "-Command", "-"];
@@ -28,7 +28,7 @@ export function createPty(opts: { nsenter: boolean }): PtySession {
     args = ["-qfc", "/bin/bash -i", "/dev/null"];
   }
   const proc = spawn(file, args, {
-    env: { ...process.env, TERM: "xterm-256color", LANG: "C.UTF-8", SHELL: "/bin/bash" },
+    env: { ...process.env, TERM: "xterm-256color", LANG: "C.UTF-8" },
     stdio: ["pipe", "pipe", "pipe"],
   });
   return {
