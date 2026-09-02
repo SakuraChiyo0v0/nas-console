@@ -17,9 +17,6 @@ services:
       - PORT=8890
       - TZ=Asia/Hong_Kong
     volumes:
-      - nas-console-data:/data
+      - ./data:/data
     labels:
       - com.centurylinklabs.watchtower.enable=true
-
-volumes:
-  nas-console-data:
