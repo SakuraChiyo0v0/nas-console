@@ -13,3 +13,4 @@ const executor = createExecutor({ nsenter: cfg.nsenter, defaultTimeoutMs: cfg.ex
 const app = createApp({ store, service, executor, config: cfg });
 
 serveHono(app, cfg.port);
+// v0.1.0: initial backend
