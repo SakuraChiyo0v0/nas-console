@@ -7,6 +7,20 @@ import type { Config } from "../config.js";
 import type { AppVariables } from "../context.js";
 import { requireAuth, requireUser } from "../middleware.js";
 import { maskToken } from "../crypto.js";
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+
+/** 从 package.json 读版本（运行时在容器 /app，dist 在 /app/dist/server/src/routes） */
+function readVersion(): string {
+  try {
+    const here = fileURLToPath(new URL(".", import.meta.url));
+    const pkg = JSON.parse(readFileSync(new URL("../../../../package.json", import.meta.url), "utf8")) as { version?: string };
+    return pkg.version ?? "dev";
+  } catch {
+    return "dev";
+  }
+}
+const APP_VERSION = readVersion();
 
 export type ApiDeps = { store: Store; service: Service; executor: Executor; config: Config };
 
@@ -42,7 +56,7 @@ export function registerApi(app: Hono<{ Variables: AppVariables }>, deps: ApiDep
 
   const api = new Hono<{ Variables: AppVariables }>();
 
-  api.get("/health", (c) => c.json({ status: "ok", app: "nas-console", version: "0.1.0" }));
+  api.get("/health", (c) => c.json({ status: "ok", app: "nas-console", version: APP_VERSION }));
 
   // ---- 登录 / 登出 / 当前身份 ----
   api.post("/login", async (c) => {
