@@ -15,6 +15,7 @@ const cfg: Config = {
   sessionTtlSeconds: 3600,
   execDefaultTimeoutMs: 10_000,
   execMaxTimeoutMs: 30_000,
+  webDir: "./web",
 };
 
 let store: Store;

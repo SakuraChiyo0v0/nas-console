@@ -9,6 +9,7 @@ export type Config = {
   sessionTtlSeconds: number;
   execDefaultTimeoutMs: number;
   execMaxTimeoutMs: number;
+  webDir: string;
 };
 
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
@@ -27,5 +28,6 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     sessionTtlSeconds,
     execDefaultTimeoutMs: Number(env.EXEC_DEFAULT_TIMEOUT_MS ?? 30_000),
     execMaxTimeoutMs: Number(env.EXEC_MAX_TIMEOUT_MS ?? 300_000),
+    webDir: env.NAS_CONSOLE_WEB_DIR || "./web",
   };
 }

@@ -22,6 +22,20 @@ export type ExecResult = {
  * - 本地开发（nsenter=false）：直接 spawn sh / cmd
  */
 export function createExecutor(opts: { nsenter: boolean; defaultTimeoutMs: number; maxTimeoutMs: number }) {
+  /** 单引号包裹 + 转义，用于把 cwd 安全拼进 shell 命令 */
+  function shellQuote(p: string): string {
+    return "'" + p.replace(/'/g, `'\\''`) + "'";
+  }
+
+  /** cwd 在"命令执行前 cd"实现（nsenter 后 spawn 的 cwd 是容器内目录，宿主视角必须用 cd） */
+  function withCwd(cmd: string, cwd?: string): string {
+    if (!cwd) return cmd;
+    if (process.platform === "win32") {
+      return `cd /d "${cwd.replace(/"/g, '\\"')}" && ${cmd}`;
+    }
+    return `cd ${shellQuote(cwd)} 2>/dev/null || cd /; ${cmd}`;
+  }
+
   function buildCommand(cmd: string): { file: string; args: string[] } {
     if (opts.nsenter) {
       return { file: "nsenter", args: ["-t", "1", "-m", "-u", "-i", "-n", "-p", "--", "/bin/sh", "-c", cmd] };
@@ -35,7 +49,7 @@ export function createExecutor(opts: { nsenter: boolean; defaultTimeoutMs: numbe
   function run(cmd: string, options: ExecOptions = {}): Promise<ExecResult> {
     return new Promise((resolve) => {
       const timeoutMs = Math.min(options.timeoutMs ?? opts.defaultTimeoutMs, opts.maxTimeoutMs);
-      const { file, args } = buildCommand(cmd);
+      const { file, args } = buildCommand(withCwd(cmd, options.cwd));
       const child = spawn(file, args, {
         cwd: options.cwd,
         env: { ...process.env, TERM: "xterm" },
